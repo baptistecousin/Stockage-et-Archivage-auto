@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  owncloud:
+    image: owncloud/server:10.13
+    container_name: owncloud
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - OWNCLOUD_DOMAIN=localhost:8080
+      - OWNCLOUD_DB_TYPE=mysql
+      - OWNCLOUD_DB_NAME=owncloud
+      - OWNCLOUD_DB_USERNAME=owncloud
+      - OWNCLOUD_DB_PASSWORD=owncloudpass
+      - OWNCLOUD_DB_HOST=db
+      - OWNCLOUD_ADMIN_USERNAME=admin
+      - OWNCLOUD_ADMIN_PASSWORD=adminpass
+      - OWNCLOUD_TRUSTED_DOMAINS=localhost,192.168.20.34
+    volumes:
+      - owncloud_files:/mnt/data
+
+  db:
+    image: mysql:5.7
+    container_name: owncloud_db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=owncloud
+      - MYSQL_USER=owncloud
+      - MYSQL_PASSWORD=owncloudpass
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  owncloud_files:
+  db_data:
